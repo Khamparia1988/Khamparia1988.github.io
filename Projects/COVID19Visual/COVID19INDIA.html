@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset=utf-8>
+	<!-- <meta name=description content=""> -->
+	<meta name=viewport content="width=device-width, initial-scale=1">
+	<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/table-to-json@1.0.0/lib/jquery.tabletojson.min.js" integrity="sha256-H8xrCe0tZFi/C2CgxkmiGksqVaxhW0PFcUKZJZo1yNU=" crossorigin="anonymous"></script>
+	<script src='https://cdn.plot.ly/plotly-latest.min.js'></script>
+	<title>COVID-19: INDIA</title>
+</head>
+<body>
+
+<h1 style="text-align:center">A visualization of COVID-19 cases* in India</h1>
+<hr>
+<div>
+	<h2 style="text-align:center">COVID- 19 cases* in India </h2>
+<div  id='Div1' style="float: left;" ></div>
+<div id='Div2' style="margin-left: 50%;"  ></div>
+</div>
+
+	<div id='myDiv'><!-- Plotly chart will be drawn inside this DIV --></div>
+
+<hr>
+<h3 style="text-align:center">*Data provided on <a href="https://www.mohfw.gov.in/">Ministry of Health and Family Welfare, Government of India</a></h3>
+
+
+</body>
+
+
+<script>
+
+
+	var stateNameArray=[];
+	var stateWiseConfirmedCases=[];
+	var stateWiseCuredCases=[];
+	var stateWiseDeathCases=[];
+
+	var countryConfirmedCases=[];
+	var countryCuredCases=[];
+	var countryDeathCases=[];
+
+
+// To get the current date and time
+// 	var today = new Date();
+// var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+// var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+// var dateTime = date+' '+time;
+
+getData();
+
+function getData() {
+$.get('https://www.mohfw.gov.in/', function(response) {  
+	// console.log(response);
+	var tableRows = response.replace(/<thead>[\s|\S]*?<\/thead>/g).match(/<tr>[\s|\S]*?<\/tr>/g);
+
+	console.log(tableRows.length);
+
+// 	for (var i = 0; i < (tableRows.length)-2; i++) {
+	for (var i = 0; i < 33; i++) {
+		 var rowIndividual = tableRows[i].match(/<td>[\s|\S]*?<\/td>/g);
+		 var sNo=rowIndividual[0].match(/<td>([\d]*?)<\/td>/)[1];
+		 var stateName=rowIndividual[1].match(/<td>(.*?)<\/td>/)[1];
+		 stateNameArray.push(stateName);
+		 var stateConfirmedCases=rowIndividual[2].match(/<td>([\d]*?)<\/td>/)[1];
+		 stateWiseConfirmedCases.push(stateConfirmedCases);
+		 var stateCured=rowIndividual[3].match(/<td>([\d]*?)<\/td>/)[1];
+		 stateWiseCuredCases.push(stateCured);
+		 var stateDeath=rowIndividual[4].match(/<td>([\d]*?)<\/td>/)[1];
+		 stateWiseDeathCases.push(stateDeath);
+	}
+
+// 	for (var j = tableRows.length - 2; j>0; j--) {
+	for (var j = 33; j>0; j--) {
+		 var rowIndividual = tableRows[j].match(/<strong>[\s|\S]*?<\/strong>/g);
+		 var totalConfirmedCases=rowIndividual[1].match(/<strong>([\s|\S]*?)<\/strong>/)[1];
+		 countryConfirmedCases.push(totalConfirmedCases);
+		 var totalCured=rowIndividual[2].match(/<strong>([\d]*?)<\/strong>/)[1];
+		 countryCuredCases.push(totalCured);
+		 var totalDeath=rowIndividual[3].match(/<strong>([\d]*?)<\/strong>/)[1];
+		 countryDeathCases.push(totalDeath);
+		 break;
+	}
+
+
+countryInfo(countryConfirmedCases, countryDeathCases, countryCuredCases);
+displayInfo(stateNameArray, stateWiseConfirmedCases, stateWiseDeathCases, stateWiseCuredCases, 'State-Wise COVID-19 cases*','myDiv');
+
+});
+
+}
+
+
+function countryInfo(ConfirmedCases, DeathCases, CuredCases){
+var trace1 = {
+  x: ['Total-Cases*', 'Death-Cases*', 'Cured-Cases*'],
+  y: [parseInt(ConfirmedCases), parseInt(DeathCases), parseInt(CuredCases)],
+  marker:{
+    color: ['rgba(204,204,204,1)', 'rgba(222,45,38,0.8)', 'rgba(45,222,38,0.8)']
+  },
+  type: 'bar'
+};
+
+var data = [trace1];
+
+var layout = {
+  // title: 'Cases* in India'
+};
+
+Plotly.newPlot('Div1', data, layout);
+
+
+var data = [{
+  values: [(parseInt(ConfirmedCases)-(parseInt(DeathCases)+parseInt(CuredCases))), parseInt(DeathCases), parseInt(CuredCases)],
+  labels: ['Under-Cure*', 'Death-Cases*', 'Cured-Cases*'],
+  marker:{
+    color: ['rgba(38,45,222,0.8)', 'rgba(222,45,38,0.8)', 'rgba(45,222,38,0.8)']
+  },
+  type: 'pie'
+}];
+
+var layout = {
+  // height: 400,
+  // width: 500
+};
+
+Plotly.newPlot('Div2', data, layout);
+
+}
+
+function displayInfo(NameArray, CCases, DCases, CuCases, titleText,locationText) {
+
+		var trace1 = {
+  x: NameArray,
+  y: CCases,
+  name: 'Total-Cases*',
+  type: 'bar',
+  marker:{
+    color: 'rgb(204,204,204)',
+    opacity: 1,
+  },
+};
+
+var trace2 = {
+  x: NameArray,
+  y: DCases,
+  name: 'Death-Cases*',
+  type: 'bar',
+    marker:{
+    color: 'rgb(222,45,38)',
+    opacity: 0.8,
+  },
+};
+
+	var trace3 = {
+  x: NameArray,
+  y: CuCases,
+  name: 'Cured-Cases*',
+  type: 'bar',
+    marker:{
+    color: 'rgb(45,222,38)',
+    opacity: 0.8,
+  },
+};
+
+var data = [trace1, trace2, trace3];
+
+var layout = {
+	title: titleText,
+	barmode: 'group'};
+
+Plotly.newPlot(locationText, data, layout);
+
+}
+
+</script>
+
+</html>
+

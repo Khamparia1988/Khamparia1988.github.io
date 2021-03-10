@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>NIA</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+	 <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<style>
+* {
+  box-sizing: border-box;
+}
+
+/* Style the body */
+body {
+  font-family: Arial;
+  margin: 0;
+}
+
+
+
+
+
+/* Column container */
+.row {  
+  display: flex;
+  flex-wrap: wrap;
+}
+
+/* Create two unequal columns that sits next to each other */
+/* Sidebar/left column */
+.side {
+  flex: 13%;
+  background-color: #f1f1f1;
+  padding: 10px;
+}
+
+/* Main column */
+.main {
+  flex: 87%;
+  background-color: white;
+  padding: 20px;
+}
+
+
+/* Responsive layout - when the screen is less than 700px wide, make the two columns stack on top of each other instead of next to each other */
+@media screen and (max-width: 700px) {
+  .row {   
+    flex-direction: column;
+  }
+}
+</style>
+</head>
+<body>
+
+
+<div>
+  <h1 align="center" style="margin:0">Function optimization by evolutionary algorithm</h1>
+<!-- <h4 align="center" style="margin:0">[Coded by: Himanshu Mittal] </h4> -->
+<!-- [Link: <a href="#">Github</a>] -->
+<hr>
+</div>
+
+
+
+
+<!-- The flexible grid (content) -->
+<div class="row">
+  <div class="side">
+	  <p>Choose the algorithm:<br>
+	  <input type="radio" name="algo" id="pso"> PSO 
+		  </p>
+<!--    	<p>Choose the algorithm:<br>
+<input type="radio" name="algo" id="pso"> PSO &nbsp; <input type="radio" name="algo" id="de"> DE
+</p> -->
+<hr>
+<p>Population Size: <br>
+	<input type="number" name="PopSize" id="popSize" min=1>;<br></p>
+	<!-- <input type="text" name="PopSize" id="popSize">; -->
+	
+<p>Maximum Iterations: <br>
+<input type="text" name="MaxItr" id="maxItr">;<br></p>
+
+<p>Dimensional Size: <br>
+<input type="text" name="Dims" id="dims"></p>
+
+<p>Upper Bound: <br>
+<input type="text" name="UB" id="ub">; <br></p>
+<p>Lower Bound: <br>
+<input type="text" name="LB" id="lb">
+</p>
+<hr>
+<input type="submit" value="Submit" onclick="mainInit()">
+
+<input type="submit" value="Clear" onclick="window.location.reload(false);">
+
+  </div>
+  <div class="main">
+<div id="resultDiv"></div>
+<div id="avgFitDiv"></div>
+<div id="finalResultDiv"></div>
+<div id="displayGraphDiv"></div>
+
+  </div>
+</div>
+
+
+
+
+
+<script src="main.js"></script>
+<script src="pso.js"></script>
+<script src="de.js"></script>
+<script src="FitnessDefination.js"></script>
+<script src="problemDefination.js"></script>
+</body>
+
+</html>
